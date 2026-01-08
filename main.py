@@ -31,3 +31,20 @@ def register(username: str = Form(...), password: str = Form(...)):
         conn.close()
 
     return {"success": True, "message": "Registered successfully"}
+
+@app.post("/login")
+def login(username: str = Form(...), password: str = Form(...)):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM users WHERE username = ? AND password = ?",
+        (username, password)
+    )
+    user = cursor.fetchone()
+    conn.close()
+
+    if user:
+        return {"success": True, "message": "Login successful"}
+    else:
+        return {"success": False, "message": "Invalid username or password"}
